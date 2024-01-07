@@ -1,16 +1,14 @@
 package com.example.demo.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
-// This tells Hibernate to make a table out of this class
 @Entity
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name="id")
+    private Long id;
 
     private String name;
 
@@ -18,11 +16,11 @@ public class User {
     
     private String gender;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
