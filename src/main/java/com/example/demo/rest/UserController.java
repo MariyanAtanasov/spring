@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entities.User;
 import com.example.demo.repository.UserRepository;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.sql.SQLException;
+
 @RestController
 @RequestMapping(path = "/demo")
 public class UserController {
@@ -18,7 +22,7 @@ public class UserController {
     @PostMapping(path = "/update", consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
     void updateUser(@RequestBody UserModel user) {
-        userService.updateEmployee(user);
+        userService.updateUser(user);
     }
 
     @PostMapping(path = "/add")
@@ -35,5 +39,22 @@ public class UserController {
     @GetMapping(path = "/all")
     public @ResponseBody Iterable<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    @GetMapping(path = "/findById")
+    public @ResponseBody UserModel findUserById(@RequestParam long id){
+        try {
+            return userService.getUserById(id);
+        }
+       catch (SQLException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @DeleteMapping(path = "/delete")
+    public String deleteUserById(@RequestParam long id){
+        userRepository.deleteById(id);;
+        return "User Deleted Successfully";
     }
 }

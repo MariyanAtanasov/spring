@@ -16,11 +16,11 @@ public class UserDao {
 
     }
 
-    public User getEmployeeById(long id) throws Exception {
+    public User getUserById(long id) throws Exception {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return user.get();
         }
-        throw new Exception("User is not present!");
+        throw new Exception("User is not present in database!");
     }
 }

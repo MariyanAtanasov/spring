@@ -7,7 +7,6 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.Optional;
 
 @Service
@@ -21,9 +20,9 @@ public class UserService {
 
     }
 
-    public void updateEmployee(UserModel userModel) {
-        Optional<User> optionalEmployee = userRepository.findById(userModel.getId());
-        User user = optionalEmployee.get();
+    public void updateUser(UserModel userModel) {
+        Optional<User> optionalUser = userRepository.findById(userModel.getId());
+        User user = optionalUser.get();
         if (!"".equals(userModel.getId()) | !"".equals(userModel.getName()) | !"".equals(userModel.getGender()) | !"".equals(userModel.getEmail())) {
             user.setId(userModel.getId());
             user.setGender(userModel.getGender());
@@ -31,6 +30,11 @@ public class UserService {
             user.setEmail(userModel.getEmail());
             userRepository.save(user);
         }
+    }
+
+    public UserModel getUserById(long id) throws Exception {
+        User user = userDao.getUserById(id);
+        return getModel(user);
     }
 
     private UserModel getModel(User user) {
