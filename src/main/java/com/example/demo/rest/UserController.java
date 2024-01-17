@@ -1,5 +1,6 @@
 package com.example.demo.rest;
 
+import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.models.UserModel;
 import com.example.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/demo")
@@ -42,19 +44,28 @@ public class UserController {
     }
 
     @GetMapping(path = "/findById")
-    public @ResponseBody UserModel findUserById(@RequestParam long id){
+    public @ResponseBody UserModel findUserById(@RequestParam long id) {
         try {
             return userService.getUserById(id);
-        }
-       catch (SQLException e) {
+        } catch (UserNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found", e);
+        } catch (SQLException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error", e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
     @DeleteMapping(path = "/delete")
-    public String deleteUserById(@RequestParam long id){
-        userRepository.deleteById(id);;
-        return "User Deleted Successfully";
+    public String deleteUserById(@RequestParam long id) throws SQLException,UserNotFoundException{
+        try {
+                UserModel user = userService.getUserById(id);
+                String userName = user.getName();
+                userRepository.deleteById(id);
+                return "User with name: \"" + userName + "\" is deleted from DB successfully";
+            }
+        catch (UserNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found", e);
+        }
+        catch (SQLException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error", e);
+        }
     }
 }
