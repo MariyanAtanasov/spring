@@ -5,6 +5,7 @@ import com.example.demo.models.UserModel;
 import com.example.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entities.User;
@@ -12,8 +13,8 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
-import java.util.Optional;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(path = "/demo")
 public class UserController {
@@ -21,19 +22,16 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
-    @PostMapping(path = "/update", consumes = "application/json")
-    @ResponseStatus(HttpStatus.OK)
-    void updateUser(@RequestBody UserModel user) {
-        userService.updateUser(user);
+    @PostMapping(path = "/update", consumes = MediaType.ALL_VALUE)
+    public void updateUser(@RequestBody UserModel model) throws UserNotFoundException, SQLException {
+        userService.updateUser(model);
     }
-
     @PostMapping(path = "/add")
-    public @ResponseBody User addNewUser(@RequestParam String name
-            ,@RequestParam String gender, @RequestParam String email) {
+    public @ResponseBody User addNewUser(@RequestBody UserModel model) {
         User springUser = new User();
-        springUser.setName(name);
-        springUser.setGender(gender);
-        springUser.setEmail(email);
+        springUser.setName(model.getName());
+        springUser.setGender(model.getGender());
+        springUser.setEmail(model.getEmail());
         userRepository.save(springUser);
         return springUser;
     }

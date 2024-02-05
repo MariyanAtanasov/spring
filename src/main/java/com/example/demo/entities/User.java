@@ -16,6 +16,9 @@ public class User {
     
     private String gender;
 
+    public User()
+    {}
+
     public Long getId() {
         return id;
     }

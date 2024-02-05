@@ -22,7 +22,7 @@ public class UserService {
 
     }
 
-    public void updateUser(UserModel userModel) {
+    public UserModel updateUser(UserModel userModel) {
         Optional<User> optionalUser = userRepository.findById(userModel.getId());
         User user = optionalUser.get();
         if (!"".equals(userModel.getId()) | !"".equals(userModel.getName()) | !"".equals(userModel.getGender()) | !"".equals(userModel.getEmail())) {
@@ -32,10 +32,12 @@ public class UserService {
             user.setEmail(userModel.getEmail());
             userRepository.save(user);
         }
+        return getModel(user);
     }
 
     public UserModel getUserById(long id) throws SQLException,UserNotFoundException {
         User user = userDao.getUserById(id);
+        user.setId(id);
         return getModel(user);
     }
 

@@ -18,7 +18,7 @@ public class UserDao {
 
     }
 
-    public User getUserById(long id) throws SQLException,UserNotFoundException {
+    public User getUserById(long id) throws UserNotFoundException {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return user.get();
