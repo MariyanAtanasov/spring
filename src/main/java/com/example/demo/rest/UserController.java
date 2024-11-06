@@ -14,18 +14,21 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
 
+//React usage
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(path = "/demo")
+@RequestMapping(path = "/demo/users")
 public class UserController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
+
     @PostMapping(path = "/update", consumes = MediaType.ALL_VALUE)
     public void updateUser(@RequestBody UserModel model) throws UserNotFoundException, SQLException {
         userService.updateUser(model);
     }
+
     @PostMapping(path = "/add")
     public @ResponseBody User addNewUser(@RequestBody UserModel model) {
         User springUser = new User();
@@ -51,18 +54,17 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error", e);
         }
     }
+
     @DeleteMapping(path = "/delete")
-    public String deleteUserById(@RequestParam long id) throws SQLException,UserNotFoundException{
+    public String deleteUserById(@RequestParam long id) throws SQLException, UserNotFoundException {
         try {
-                UserModel user = userService.getUserById(id);
-                String userName = user.getName();
-                userRepository.deleteById(id);
-                return "User with name: \"" + userName + "\" is deleted from DB successfully";
-            }
-        catch (UserNotFoundException e) {
+            UserModel user = userService.getUserById(id);
+            String userName = user.getName();
+            userRepository.deleteById(id);
+            return "User with name: \"" + userName + "\" is deleted from DB successfully";
+        } catch (UserNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found", e);
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error", e);
         }
     }
